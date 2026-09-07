@@ -10,74 +10,70 @@ Cabecera canónica con el corte exacto de work y de audit, y `ACTOR_LOCAL_PATH`.
 Del protocolo de derivación aplicado sobre ese corte resultó:
 
 ```text
-D1  última entrega material: la intervención constitutiva
-D2  esa entrega toca sólo la raíz, por lo que es previa a toda unidad
-D3  la intervención auditora del corte preserva una decisión humana
-D4  su próxima acción indica comenzar la unidad material
-D5  existe la auditoría de la última entrega: fue auditada y no arrojó defectos
+D1  última entrega material: la primera entrega de unidad-secuencia
+D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
+D3  la intervención auditora del corte es la auditoría de esa entrega
+D4  veredicto SUFICIENTE, sin defectos; su próxima acción indica producir la entrega siguiente
+D5  existe auditorias/<D1>.md en el corte de audit: la última entrega ya fue auditada
 D6  PERIMETRO_ULTIMA_MODIFICACION=CONSTITUCION, sin deltas posteriores que componer
 ```
 
-La decisión humana preservada acepta `PLAN.md` en una identidad exacta. Se comprobó que el blob
-del PLAN en el corte de work coincide con el blob aceptado, en lugar de suponerlo:
-
-```text
-$ git rev-parse b5b66b09a1551eb653d5e961eae324c5e8650665:PLAN.md
-75a554ee227443ae7b0ed8da784038264d25242f                                      rc=0
-```
+No existía entrega pendiente de auditoría.
 
 ## Qué hizo y por qué
 
-Comenzó la única unidad material del PLAN produciendo su primera entrega principal.
+Produjo la siguiente entrega principal de la unidad agregando exactamente un elemento.
 
-Conforme a `D-6` del PLAN, la primera entrega crea `SECUENCIA.txt` con la línea `1`. En el corte
-recibido el archivo no existía, de modo que no había un último valor del cual tomar el sucesor.
+El sucesor se derivó del material presente en el corte, no del transporte:
 
-El valor no se derivó del `turn_id`, del número de commits ni de memoria conversacional. Esa
-independencia es lo que permite que un CONSTRUCTOR fresco continúe esta unidad leyendo
+```text
+$ git show e7ac9bf2a0f51f7e5088175ae28d913a48181fe1:unidad-secuencia/SECUENCIA.txt | tail -n 1
+1                                                                             rc=0
+```
+
+Último valor material `1`, sucesor `2`. No se usó el `turn_id`, el número de commits ni memoria
+conversacional. Es lo que permite que un CONSTRUCTOR fresco continúe esta unidad leyendo
 únicamente el archivo en el corte que reciba.
+
+Las líneas anteriores no se modificaron, eliminaron ni reordenaron, conforme a `D-4` del PLAN.
 
 La intervención toca exclusivamente `unidad-secuencia/`.
 
 ## Qué verificó
 
+Todas las comprobaciones se ejecutaron sobre el blob que queda en Git, que es la autoridad, y no
+sobre la copia de trabajo. El runtime del CONSTRUCTOR tiene `core.autocrlf` activo: la copia de
+trabajo se materializa con `CRLF` mientras el blob se almacena con `LF`, y comparar la copia de
+trabajo contra `seq` introduciría un `CR` inexistente en el material.
+
 ### V-1 cantidad de elementos
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-1                                                                             rc=0
+2                                                                             rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 1) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 2) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
-0000000   1  \n
-0000002                                                                       rc=0
+0000000   1  \n   2  \n
+0000004                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..1`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..2`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`.
 
-`V-1` y `V-2` se comprobaron sobre el blob que queda en Git, que es la autoridad, y no sobre la
-copia de trabajo. El runtime del CONSTRUCTOR tiene `core.autocrlf` activo: la copia de trabajo
-se materializa con `CRLF` mientras el blob se almacena con `LF`. Comparar la copia de trabajo
-contra `seq` introduciría un `CR` final que no existe en el material y produciría un fallo
-espurio. La forma reproducible por el AUDITOR sobre el corte publicado es
-`git show <corte>:unidad-secuencia/SECUENCIA.txt`.
-
 ### V-3 delta de la entrega
-
-En la primera entrega de la unidad no existe una versión anterior del archivo contra la cual
-diferenciar. El delta equivalente es la creación del archivo con exactamente una línea agregada
-y ninguna eliminada.
 
 ```text
 $ git diff --cached --numstat -- unidad-secuencia/SECUENCIA.txt
 1       0       unidad-secuencia/SECUENCIA.txt                                rc=0
 ```
+
+Exactamente una línea agregada, ninguna eliminada ni modificada.
 
 ### V-4 perímetro de la entrega
 
@@ -101,12 +97,11 @@ La entrega toca únicamente `unidad-secuencia/`. No toca la raíz.
 ## Resultado producido
 
 ```text
-unidad-secuencia/SECUENCIA.txt   primera entrega de la secuencia monotónica
+unidad-secuencia/SECUENCIA.txt   secuencia monotónica con un elemento más
 unidad-secuencia/EVENTO.md       esta entrega
 ```
 
 ## Necesidad humana detectada
 
-Ninguna. La decisión humana que el PLAN anticipaba en `IH-1` ya fue resuelta y preservada en
-`audit-*`. La unidad material se ejecuta dentro del perímetro delegado vigente y no requiere
+Ninguna. La unidad material se ejecuta dentro del perímetro delegado vigente y no requiere
 autoridad humana adicional por entrega.
