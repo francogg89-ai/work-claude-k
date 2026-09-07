@@ -15,15 +15,15 @@ situación se reconstruyó íntegramente desde Git sobre los cortes exactos reci
 ### Identidad de las referencias recibidas
 
 ```text
-$ git cat-file -t 081a9addf6bdc35d949fd6663bd130df3ed9c1e0
+$ git cat-file -t 6a10ba61d0e7df060f5f27a91e0cacfef226a68e
 commit                                                                        rc=0
 $ git rev-parse b5b66b09a1551eb653d5e961eae324c5e8650665:BOOTSTRAP.md
 d599f63e7ea051960664c3b4d8dac90382e20f09                                      rc=0
-$ git rev-parse 081a9ad:PLAN.md
+$ git rev-parse 6a10ba6:PLAN.md
 75a554ee227443ae7b0ed8da784038264d25242f                                      rc=0
 $ git -C audit-chatgpt-k fetch origin
-a33faf5..14f51a5  main -> origin/main                                         rc=0
-$ git -C audit-chatgpt-k cat-file -t 14f51a5b63b93d7f7e80b248533e31b32b98da6e
+14f51a5..5680d57  main -> origin/main                                         rc=0
+$ git -C audit-chatgpt-k cat-file -t 5680d5796d1ac11175f0b1df07b8efe8b9a31b92
 commit                                                                        rc=0
 ```
 
@@ -45,19 +45,19 @@ blob                                                                          rc
 ### Protocolo de derivación sobre el corte recibido
 
 ```text
-$ git show --name-only --format= 081a9ad
+$ git show --name-only --format= 6a10ba6
 unidad-secuencia/EVENTO.md
 unidad-secuencia/SECUENCIA.txt                                                rc=0
 
-$ git -C audit-chatgpt-k show --name-only --format= 14f51a5
-auditorias/081a9addf6bdc35d949fd6663bd130df3ed9c1e0.md                        rc=0
+$ git -C audit-chatgpt-k show --name-only --format= 5680d57
+auditorias/6a10ba61d0e7df060f5f27a91e0cacfef226a68e.md                        rc=0
 
-$ git -C audit-chatgpt-k cat-file -e 14f51a5:auditorias/081a9addf6bdc35d949fd6663bd130df3ed9c1e0.md
+$ git -C audit-chatgpt-k cat-file -e 5680d57:auditorias/6a10ba61d0e7df060f5f27a91e0cacfef226a68e.md
 (sin salida)                                                                  rc=0
 ```
 
 ```text
-D1  última entrega material alcanzable desde el corte de work: 081a9ad, decimoctava entrega
+D1  última entrega material alcanzable desde el corte de work: 6a10ba6, decimonovena entrega
     de unidad-secuencia
 D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
 D3  la intervención auditora del corte es la auditoría de esa misma entrega
@@ -65,7 +65,7 @@ D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena conti
     CONSTRUCTOR corriente produciendo la siguiente entrega principal de la unidad. No dispone
     relevo alguno y no declara token de NECESIDAD DEL HUMANO abierta.
     PERIMETRO_ULTIMA_MODIFICACION=CONSTITUCION
-D5  existe auditorias/081a9ad...md en el corte de audit: la última entrega ya fue auditada
+D5  existe auditorias/6a10ba6...md en el corte de audit: la última entrega ya fue auditada
 D6  perímetro resuelto sobre BOOTSTRAP.md de work-claude-k, sin deltas posteriores que
     componer
 ```
@@ -81,17 +81,17 @@ Produjo la siguiente entrega principal de la unidad agregando exactamente un ele
 El sucesor se derivó del material presente en el corte, no del transporte:
 
 ```text
-$ git show 081a9addf6bdc35d949fd6663bd130df3ed9c1e0:unidad-secuencia/SECUENCIA.txt | tail -n 1
-18                                                                            rc=0
+$ git show 6a10ba61d0e7df060f5f27a91e0cacfef226a68e:unidad-secuencia/SECUENCIA.txt | tail -n 1
+19                                                                            rc=0
 ```
 
-Último valor material `18`, sucesor `19`. No se usó el `turn_id`, el número de commits, ni el
+Último valor material `19`, sucesor `20`. No se usó el `turn_id`, el número de commits, ni el
 `VALOR_SECUENCIA` o el `ENTREGA_MATERIAL` declarados por la auditoría del corte. Conforme a `D-5`
 del PLAN, el archivo en el corte es la única fuente del siguiente valor, incluso cuando la
 auditoría enuncia ese mismo número.
 
 El sucesor se calculó sobre el valor decimal leído del archivo, no sobre el orden lexicográfico de
-las líneas: en orden lexicográfico `18` no sería la última línea del archivo, pero sí lo es en el
+las líneas: en orden lexicográfico `19` no sería la última línea del archivo, pero sí lo es en el
 orden material que fija `D-3`. `tail -n 1` toma la última línea del archivo, que es exactamente el
 último valor de la secuencia.
 
@@ -118,22 +118,23 @@ true                                                                          rc
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-19                                                                            rc=0
+20                                                                            rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 19) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 20) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
 0000000   1  \n   2  \n   3  \n   4  \n   5  \n   6  \n   7  \n   8  \n
 0000020   9  \n   1   0  \n   1   1  \n   1   2  \n   1   3  \n   1   4
 0000040  \n   1   5  \n   1   6  \n   1   7  \n   1   8  \n   1   9  \n
-0000060                                                                       rc=0
+0000060   2   0  \n
+0000063                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..19`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..20`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`. `diff` contra `seq` compara el orden material completo, no
 un orden lexicográfico, por lo que una permutación de líneas no pasaría inadvertida.
 
