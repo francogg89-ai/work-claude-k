@@ -8,27 +8,27 @@ historia vive en Git.
 Cabecera canónica completa de `4.3` con `INCOMING_TURN_ID` entero, el corte exacto de work y de
 audit, `BOOTSTRAP_REPO`/`BOOTSTRAP_PATH`/`BOOTSTRAP_SHA` y `ACTOR_LOCAL_PATH`.
 
-Es un pase hacia un CONSTRUCTOR **fresco por relevo**, no una constitución inicial. Por eso sí
-corresponde aplicar el protocolo de derivación `D1-D6` sobre el corte recibido. Esta instancia no
-heredó conclusiones, veredictos ni memoria del CONSTRUCTOR saliente: reconstruyó la situación
-íntegramente desde Git conforme a `12` de REVOLUTIONS. El `next_prompt` es transporte, no fuente
-ni autoridad.
+Es un pase ordinario hacia el CONSTRUCTOR corriente. La instancia que entró fresca por el relevo
+de la marca absoluta 15 ya es la instancia corriente de este rol y no conserva estatus especial,
+conforme a `12` de REVOLUTIONS. La situación se reconstruyó igualmente desde Git sobre los cortes
+exactos recibidos: el `next_prompt` es transporte, no fuente ni autoridad.
 
-Conforme a `12.1`, un relevo no crea artefactos: no se produjo handoff, descriptor ni registro de
-instancia. La última intervención durable del CONSTRUCTOR saliente ya era su handoff.
+La instrucción recibida ordena además transportar al cierre una decisión de relevo del AUDITOR ya
+preservada en `audit-*`. Ese extremo no se aceptó desde el prompt: se comprobó en el material
+durable del corte de audit, que es donde la decisión vive.
 
 ### Identidad de las referencias recibidas
 
 ```text
-$ git cat-file -t 35cc6fe3bc21e423c7df55f36caf500f4fe59ee0
+$ git cat-file -t b14e36be46bc53b58f6b3c674aaf3d41e094a218
 commit                                                                        rc=0
 $ git rev-parse b5b66b09a1551eb653d5e961eae324c5e8650665:BOOTSTRAP.md
 d599f63e7ea051960664c3b4d8dac90382e20f09                                      rc=0
-$ git rev-parse 35cc6fe:PLAN.md
+$ git rev-parse b14e36b:PLAN.md
 75a554ee227443ae7b0ed8da784038264d25242f                                      rc=0
 $ git -C audit-chatgpt-k fetch origin
-7608a09..fba9c10  main -> origin/main                                         rc=0
-$ git -C audit-chatgpt-k cat-file -t fba9c1072a4e7be5d156e7e1dc50065c106543bf
+fba9c10..31d2411  main -> origin/main                                         rc=0
+$ git -C audit-chatgpt-k cat-file -t 31d2411ed20eb7f44f218d6f2dd604d6032e4d59
 commit                                                                        rc=0
 ```
 
@@ -37,36 +37,31 @@ prompt. El `PLAN.md` presente en el corte conserva el blob aceptado por la decis
 preservada en `audit-*`, de modo que la autoridad de diseño aplicada a esta entrega es la
 aceptada y no una reinterpretación.
 
-El bootstrap localizado por `BOOTSTRAP_REPO`/`BOOTSTRAP_PATH`/`BOOTSTRAP_SHA` es el bootstrap
-durable del CONSTRUCTOR de este trabajo. Un relevo no crea uno nuevo: esta instancia se constituye
-sobre el existente.
-
 ### Protocolo de derivación sobre el corte recibido
 
 ```text
-$ git show --name-only --format= 35cc6fe
+$ git show --name-only --format= b14e36b
 unidad-secuencia/EVENTO.md
 unidad-secuencia/SECUENCIA.txt                                                rc=0
 
-$ git -C audit-chatgpt-k show --name-only --format= fba9c10
-auditorias/35cc6fe3bc21e423c7df55f36caf500f4fe59ee0.md                        rc=0
+$ git -C audit-chatgpt-k show --name-only --format= 31d2411
+auditorias/b14e36be46bc53b58f6b3c674aaf3d41e094a218.md                        rc=0
 
-$ git -C audit-chatgpt-k cat-file -e fba9c10:auditorias/35cc6fe3bc21e423c7df55f36caf500f4fe59ee0.md
+$ git -C audit-chatgpt-k cat-file -e 31d2411:auditorias/b14e36be46bc53b58f6b3c674aaf3d41e094a218.md
 (sin salida)                                                                  rc=0
 ```
 
 ```text
-D1  última entrega material alcanzable desde el corte de work: 35cc6fe, decimocuarta entrega
+D1  última entrega material alcanzable desde el corte de work: b14e36b, decimoquinta entrega
     de unidad-secuencia
 D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
 D3  la intervención auditora del corte es la auditoría de esa misma entrega
-D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena constituir como
-    corriente una instancia CONSTRUCTOR fresca sobre los cortes exactos recibidos, producir la
-    siguiente entrega principal de la unidad y devolverla al AUDITOR corriente. No declara token
-    de NECESIDAD DEL HUMANO abierta.
+D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena continuar con el
+    CONSTRUCTOR corriente produciendo la siguiente entrega principal de la unidad y, al
+    cerrarla, emitir el pase a un AUDITOR fresco por el relevo periódico que esa misma
+    intervención dejó decidido durablemente. No declara token de NECESIDAD DEL HUMANO abierta.
     PERIMETRO_ULTIMA_MODIFICACION=CONSTITUCION
-D5  existe auditorias/35cc6fe...md en el corte de audit: la última entrega ya fue auditada, de
-    modo que el relevo no salteó trabajo pendiente
+D5  existe auditorias/b14e36b...md en el corte de audit: la última entrega ya fue auditada
 D6  perímetro resuelto sobre BOOTSTRAP.md de work-claude-k, sin deltas posteriores que
     componer
 ```
@@ -81,31 +76,31 @@ Produjo la siguiente entrega principal de la unidad agregando exactamente un ele
 El sucesor se derivó del material presente en el corte, no del transporte:
 
 ```text
-$ git show 35cc6fe3bc21e423c7df55f36caf500f4fe59ee0:unidad-secuencia/SECUENCIA.txt | tail -n 1
-14                                                                            rc=0
+$ git show b14e36be46bc53b58f6b3c674aaf3d41e094a218:unidad-secuencia/SECUENCIA.txt | tail -n 1
+15                                                                            rc=0
 ```
 
-Último valor material `14`, sucesor `15`. No se usó el `turn_id`, el número de commits, ni el
+Último valor material `15`, sucesor `16`. No se usó el `turn_id`, el número de commits, ni el
 `VALOR_SECUENCIA` o el `ENTREGA_MATERIAL` declarados por la auditoría del corte. Conforme a
 `D-5` del PLAN, el archivo en el corte es la única fuente del siguiente valor, incluso cuando la
 auditoría enuncia ese mismo número.
 
-Esa independencia es exactamente lo que el relevo pone a prueba: una instancia fresca sin
-conversación previa deriva el mismo estado que habría derivado la saliente, porque el estado vive
-en el archivo y no en la memoria del actor.
-
 El sucesor se calculó sobre el valor decimal leído del archivo, no sobre el orden lexicográfico
-de las líneas: en orden lexicográfico `14` no sería la última línea del archivo, pero sí lo es en
+de las líneas: en orden lexicográfico `15` no sería la última línea del archivo, pero sí lo es en
 el orden material que fija `D-3`. `tail -n 1` toma la última línea del archivo, que es exactamente
 el último valor de la secuencia.
 
 Las líneas anteriores no se modificaron, eliminaron ni reordenaron, conforme a `D-4` del PLAN.
 La intervención toca exclusivamente `unidad-secuencia/`.
 
-La marca periódica absoluta 15 que activó este relevo ya fue derivada y habilitada por el AUDITOR
-del corte. Este CONSTRUCTOR no la reevalúa ni decide relevos: conforme a `C-7` y `C-8` del PLAN,
-quién decide y habilita un relevo es el AUDITOR, y la grilla se evalúa sobre `C-1` y `C-2`, no
-sobre un contador reiniciable.
+### Relevo del AUDITOR transportado, no decidido
+
+La auditoría del corte dejó durablemente decidido el relevo periódico del AUDITOR por la marca
+absoluta 20 y fijó como receptor inmediato al CONSTRUCTOR corriente y, después de esta entrega,
+un AUDITOR fresco. Este CONSTRUCTOR no reevalúa esa decisión, no deriva la posición del AUDITOR y
+no decide relevos: conforme a `C-7` y `C-8` del PLAN y a `ROL-CONSTRUCTOR`, ejecuta la decisión
+recibida cerrando su intervención material de forma normal y emitiendo el `next_instance`
+correspondiente. El relevo no produce artefacto alguno en este repositorio, conforme a `12.1`.
 
 ## Qué verificó
 
@@ -122,22 +117,22 @@ true                                                                          rc
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-15                                                                            rc=0
+16                                                                            rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 15) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 16) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
 0000000   1  \n   2  \n   3  \n   4  \n   5  \n   6  \n   7  \n   8  \n
 0000020   9  \n   1   0  \n   1   1  \n   1   2  \n   1   3  \n   1   4
-0000040  \n   1   5  \n
-0000044                                                                       rc=0
+0000040  \n   1   5  \n   1   6  \n
+0000047                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..15`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..16`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`. `diff` contra `seq` compara el orden material completo,
 no un orden lexicográfico, por lo que una permutación de líneas no pasaría inadvertida.
 
@@ -171,9 +166,9 @@ La entrega toca únicamente `unidad-secuencia/`. No toca la raíz ni otra unidad
 - La publicación al remoto ocurre después del commit autoritativo y su resultado no puede
   registrarse dentro de él.
 - Un resultado local no demuestra una propiedad que sólo pueda comprobarse en un entorno real.
-- Esta instancia no puede comprobar por sí misma que el relevo fue correctamente habilitado más
-  allá de lo que la auditoría del corte declara durablemente en `audit-*`. Comprobar esa decisión
-  no está en la autoridad del CONSTRUCTOR.
+- El AUDITOR entrante será una instancia fresca. Este CONSTRUCTOR no puede comprobar que esa
+  instancia reciba correctamente el pase: sólo puede emitirlo con las coordenadas exactas que el
+  método exige y dejar la materia completa en Git.
 
 ## Resultado producido
 
