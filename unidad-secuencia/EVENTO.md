@@ -8,24 +8,23 @@ historia vive en Git.
 Cabecera canónica completa de `4.3` con `INCOMING_TURN_ID` entero, el corte exacto de work y de
 audit, `BOOTSTRAP_REPO`/`BOOTSTRAP_PATH`/`BOOTSTRAP_SHA` y `ACTOR_LOCAL_PATH`.
 
-Es un pase ordinario hacia el CONSTRUCTOR corriente. La intervención auditora del corte proviene
-del AUDITOR fresco activado por la marca absoluta `10`; ese relevo pertenece al otro rol y no
-altera el arranque de este turno. La situación se reconstruyó íntegramente desde Git: el
-`next_prompt` es transporte, no fuente ni autoridad.
+Es el pase de un relevo periódico del CONSTRUCTOR. Esta instancia es fresca: no dispone de
+conversación previa y reconstruyó la situación íntegramente desde Git. El `next_prompt` es
+transporte, no fuente ni autoridad: ningún dato material se tomó de él.
 
 ### Identidad de las referencias recibidas
 
 ```text
-$ git cat-file -t e531a2732244513320a31739937bd9174a9d134a
+$ git cat-file -t e1ddea1eb8cc7ac7509034065f5cf3160d10cc85
 commit                                                                        rc=0
 $ git rev-parse b5b66b09a1551eb653d5e961eae324c5e8650665:BOOTSTRAP.md
 d599f63e7ea051960664c3b4d8dac90382e20f09                                      rc=0
-$ git -C audit-chatgpt-k fetch origin
-97d44d1..70e62b3  main -> origin/main                                         rc=0
-$ git -C audit-chatgpt-k cat-file -t 70e62b3b214056cf00813d89235a2921ffc535b9
-commit                                                                        rc=0
-$ git rev-parse e531a27:PLAN.md
+$ git rev-parse e1ddea1:PLAN.md
 75a554ee227443ae7b0ed8da784038264d25242f                                      rc=0
+$ git -C audit-chatgpt-k fetch origin
+70e62b3..f6763ac  main -> origin/main                                         rc=0
+$ git -C audit-chatgpt-k cat-file -t f6763acc3f9d37d665f104df46a818d7d90f3210
+commit                                                                        rc=0
 ```
 
 Cada identidad recibida existe realmente en su repositorio, en lugar de suponerse desde el
@@ -36,27 +35,28 @@ aceptada y no una reinterpretación.
 ### Protocolo de derivación sobre el corte recibido
 
 ```text
-$ git show --name-only --format= e531a27
+$ git show --name-only --format= e1ddea1
 unidad-secuencia/EVENTO.md
 unidad-secuencia/SECUENCIA.txt                                                rc=0
 
-$ git -C audit-chatgpt-k show --name-only --format= 70e62b3
-auditorias/e531a2732244513320a31739937bd9174a9d134a.md                        rc=0
+$ git -C audit-chatgpt-k show --name-only --format= f6763ac
+auditorias/e1ddea1eb8cc7ac7509034065f5cf3160d10cc85.md                        rc=0
 
-$ git -C audit-chatgpt-k cat-file -e 70e62b3:auditorias/e531a27...md
-(existe)                                                                      rc=0
+$ git -C audit-chatgpt-k ls-tree -r --name-only f6763ac | grep e1ddea1
+auditorias/e1ddea1eb8cc7ac7509034065f5cf3160d10cc85.md                        rc=0
 ```
 
 ```text
-D1  última entrega material alcanzable desde el corte de work: e531a27, séptima entrega de
+D1  última entrega material alcanzable desde el corte de work: e1ddea1, octava entrega de
     unidad-secuencia
 D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
 D3  la intervención auditora del corte es la auditoría de esa misma entrega
-D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena continuar con el
-    CONSTRUCTOR corriente produciendo la siguiente entrega principal de la unidad. No dispone
-    relevo alguno y no declara token de NECESIDAD DEL HUMANO abierta.
+D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente dispone el relevo del
+    CONSTRUCTOR con `NEXT_INSTANCE_CONSTRUCTOR=fresh` y ordena que la instancia fresca
+    reconstruya desde Git y produzca la siguiente entrega principal de la unidad. No declara
+    token de NECESIDAD DEL HUMANO abierta.
     PERIMETRO_ULTIMA_MODIFICACION=CONSTITUCION
-D5  existe auditorias/e531a27...md en el corte de audit: la última entrega ya fue auditada
+D5  existe auditorias/e1ddea1...md en el corte de audit: la última entrega ya fue auditada
 D6  perímetro resuelto sobre BOOTSTRAP.md de work-claude-k, sin deltas posteriores que
     componer
 ```
@@ -71,21 +71,23 @@ Produjo la siguiente entrega principal de la unidad agregando exactamente un ele
 El sucesor se derivó del material presente en el corte, no del transporte:
 
 ```text
-$ git show e531a2732244513320a31739937bd9174a9d134a:unidad-secuencia/SECUENCIA.txt | tail -n 1
-7                                                                             rc=0
+$ git show e1ddea1eb8cc7ac7509034065f5cf3160d10cc85:unidad-secuencia/SECUENCIA.txt | tail -n 1
+8                                                                             rc=0
 ```
 
-Último valor material `7`, sucesor `8`. No se usó el `turn_id`, el número de commits, ni el
+Último valor material `8`, sucesor `9`. No se usó el `turn_id`, el número de commits, ni el
 `VALOR_SECUENCIA` o el `ENTREGA_MATERIAL` declarados por la auditoría del corte. Conforme a
 `D-5` del PLAN, el archivo en el corte es la única fuente del siguiente valor, incluso cuando la
-auditoría enuncia ese mismo número.
-
-La auditoría del corte deriva además que la próxima marca absoluta del CONSTRUCTOR es `9`. Ese
-dato no se usó para producir el material y no altera esta entrega: quién decide y habilita un
-relevo es el AUDITOR, conforme a `C-7` y `C-8` del PLAN.
+auditoría enuncia ese mismo número. Esta entrega es además la primera prueba real de esa
+propiedad tras un relevo: la instancia que la produce no vio ninguna de las entregas anteriores.
 
 Las líneas anteriores no se modificaron, eliminaron ni reordenaron, conforme a `D-4` del PLAN.
 La intervención toca exclusivamente `unidad-secuencia/`.
+
+La cadencia del propio rol no se usó como insumo material. La auditoría del corte deriva que
+esta instancia nace de la marca absoluta `9` del CONSTRUCTOR; quién decide y habilita un relevo
+es el AUDITOR, conforme a `C-7` y `C-8` del PLAN, y el CONSTRUCTOR no cuenta ni se releva a sí
+mismo.
 
 ## Qué verificó
 
@@ -102,20 +104,21 @@ true                                                                          rc
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-8                                                                             rc=0
+9                                                                             rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 8) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 9) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
 0000000   1  \n   2  \n   3  \n   4  \n   5  \n   6  \n   7  \n   8  \n
-0000020                                                                       rc=0
+0000020   9  \n
+0000022                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..8`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..9`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`.
 
 ### V-3 delta de la entrega
