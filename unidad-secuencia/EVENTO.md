@@ -5,27 +5,25 @@ historia vive en Git.
 
 ## Qué recibió
 
-Cabecera canónica completa de `4.3` con `INCOMING_TURN_ID=52` entero, el corte exacto de work y
+Cabecera canónica completa de `4.3` con `INCOMING_TURN_ID=54` entero, el corte exacto de work y
 de audit, `BOOTSTRAP_REPO`/`BOOTSTRAP_PATH`/`BOOTSTRAP_SHA` y `ACTOR_LOCAL_PATH`.
 
-Es un pase hacia un CONSTRUCTOR fresco por relevo. Un relevo usa exactamente la misma cabecera
-canónica que un pase ordinario y no habilita una vía reducida: esta instancia no heredó
-conversación, conclusiones ni veredictos de su antecesora, y reconstruyó la situación
-íntegramente desde Git sobre los cortes exactos recibidos. El `next_prompt` es transporte, no
-fuente ni autoridad.
+Es un pase ordinario hacia el CONSTRUCTOR corriente, sin relevo dispuesto para este rol. La
+situación se reconstruyó íntegramente desde Git sobre los cortes exactos recibidos: el
+`next_prompt` es transporte, no fuente ni autoridad.
 
 ### Identidad de las referencias recibidas
 
 ```text
-$ git cat-file -t 8090666ca83179b69989256357fcccfb9a319c66
+$ git cat-file -t 34c63ed6656370a08699b2c1a9fda8e0f8278ac8
 commit                                                                        rc=0
 $ git rev-parse b5b66b09a1551eb653d5e961eae324c5e8650665:BOOTSTRAP.md
 d599f63e7ea051960664c3b4d8dac90382e20f09                                      rc=0
-$ git rev-parse 8090666:PLAN.md
+$ git rev-parse 34c63ed:PLAN.md
 75a554ee227443ae7b0ed8da784038264d25242f                                      rc=0
 $ git -C audit-chatgpt-k fetch origin
-9e8fb2a..01dafe8  main -> origin/main                                         rc=0
-$ git -C audit-chatgpt-k cat-file -t 01dafe899eabde35d70b74fd1ab584a52948b948
+01dafe8..4081a34  main -> origin/main                                         rc=0
+$ git -C audit-chatgpt-k cat-file -t 4081a346cf6f70676f0fbe3bab2ef02707f52d08
 commit                                                                        rc=0
 ```
 
@@ -49,42 +47,43 @@ de modo que la entrega se construye sobre el candidato auditado y no sobre una p
 
 ```text
 $ git rev-parse HEAD
-8090666ca83179b69989256357fcccfb9a319c66                                      rc=0
+34c63ed6656370a08699b2c1a9fda8e0f8278ac8                                      rc=0
 $ git rev-parse origin/main
-8090666ca83179b69989256357fcccfb9a319c66                                      rc=0
+34c63ed6656370a08699b2c1a9fda8e0f8278ac8                                      rc=0
 ```
 
 ### Protocolo de derivación sobre el corte recibido
 
 ```text
-$ git show --name-only --format= 8090666
+$ git show --name-only --format= 34c63ed
 unidad-secuencia/EVENTO.md
 unidad-secuencia/SECUENCIA.txt                                                rc=0
 
-$ git -C audit-chatgpt-k show --name-only --format= 01dafe8
-auditorias/8090666ca83179b69989256357fcccfb9a319c66.md                        rc=0
+$ git -C audit-chatgpt-k show --name-only --format= 4081a34
+auditorias/34c63ed6656370a08699b2c1a9fda8e0f8278ac8.md                        rc=0
 
-$ git -C audit-chatgpt-k cat-file -e 01dafe8:auditorias/8090666ca83179b69989256357fcccfb9a319c66.md
+$ git -C audit-chatgpt-k cat-file -e 4081a34:auditorias/34c63ed6656370a08699b2c1a9fda8e0f8278ac8.md
 (sin salida)                                                                  rc=0
 ```
 
 ```text
-D1  última entrega material alcanzable desde el corte de work: 8090666, vigésima tercera
+D1  última entrega material alcanzable desde el corte de work: 34c63ed, vigésima cuarta
     entrega de unidad-secuencia
 D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
 D3  la intervención auditora del corte es la auditoría de esa misma entrega
-D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena constituir un
-    CONSTRUCTOR fresco que produzca la siguiente entrega principal de la unidad. No declara
-    token de NECESIDAD DEL HUMANO abierta y no dispone relevo del AUDITOR.
+D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena continuar con el
+    CONSTRUCTOR corriente produciendo la siguiente entrega principal de la unidad. Declara
+    consumado el relevo anterior, no dispone relevo nuevo y no declara token de NECESIDAD DEL
+    HUMANO abierta.
     PERIMETRO_ULTIMA_MODIFICACION=CONSTITUCION
-D5  existe auditorias/8090666...md en el corte de audit: la última entrega ya fue auditada
+D5  existe auditorias/34c63ed...md en el corte de audit: la última entrega ya fue auditada
 D6  perímetro resuelto sobre BOOTSTRAP.md de work-claude-k, sin deltas posteriores que
     componer
 ```
 
-No existía entrega pendiente de auditoría ni defecto que corregir: el relevo no salteó trabajo
-pendiente. El perímetro delegado vigente —construcción y escritura material exclusivamente en
-`work-claude-k`, y sólo lectura fuera de él— cubre esta intervención sin autoridad adicional.
+No existía entrega pendiente de auditoría ni defecto que corregir. El perímetro delegado vigente
+—construcción y escritura material exclusivamente en `work-claude-k`, y sólo lectura fuera de
+él— cubre esta intervención sin autoridad adicional.
 
 ## Qué hizo y por qué
 
@@ -93,29 +92,27 @@ Produjo la siguiente entrega principal de la unidad agregando exactamente un ele
 El sucesor se derivó del material presente en el corte, no del transporte:
 
 ```text
-$ git show 8090666ca83179b69989256357fcccfb9a319c66:unidad-secuencia/SECUENCIA.txt | tail -n 1
-23                                                                            rc=0
+$ git show 34c63ed6656370a08699b2c1a9fda8e0f8278ac8:unidad-secuencia/SECUENCIA.txt | tail -n 1
+24                                                                            rc=0
 ```
 
-Último valor material `23`, sucesor `24`. No se usó el `turn_id`, el número de commits, ni el
+Último valor material `24`, sucesor `25`. No se usó el `turn_id`, el número de commits, ni el
 `VALOR_SECUENCIA` o el `ENTREGA_MATERIAL` declarados por la auditoría del corte. Conforme a
 `D-5` del PLAN, el archivo en el corte es la única fuente del siguiente valor, incluso cuando la
-auditoría enuncia ese mismo número. Esa independencia es justamente lo que permite que una
-instancia fresca continúe sin conversación previa.
+auditoría enuncia ese mismo número.
 
 El sucesor se calculó sobre el valor decimal leído del archivo, no sobre el orden lexicográfico
-de las líneas: en orden lexicográfico `23` no sería la última línea del archivo, pero sí lo es en
+de las líneas: en orden lexicográfico `24` no sería la última línea del archivo, pero sí lo es en
 el orden material que fija `D-3`. `tail -n 1` toma la última línea del archivo, que es exactamente
 el último valor de la secuencia.
 
 Las líneas anteriores no se modificaron, eliminaron ni reordenaron, conforme a `D-4` del PLAN. La
 intervención toca exclusivamente `unidad-secuencia/`.
 
-La auditoría del corte deriva `posición CONSTRUCTOR = 24`, marca periódica, y por eso esta
-instancia es fresca. Ese dato no se usó para producir el material ni se reevaluó: conforme a
-`C-7` y `C-8` del PLAN, quien deriva la posición y habilita un relevo es el AUDITOR sobre el
-corte que le toque auditar. Tampoco declara relevo del AUDITOR, de modo que el pase resultante
-va al AUDITOR corriente.
+La auditoría del corte deriva `posición CONSTRUCTOR = 25` y `posición AUDITOR resultante = 29`,
+ninguna de ellas marca periódica, y no habilita relevo alguno. Ese dato no se usó para producir
+el material: conforme a `C-7` y `C-8` del PLAN, quien deriva la posición y habilita un relevo es
+el AUDITOR sobre el corte que le toque auditar, no este rol.
 
 ## Qué verificó
 
@@ -132,23 +129,24 @@ true                                                                          rc
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-24                                                                            rc=0
+25                                                                            rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 24) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 25) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
 0000000   1  \n   2  \n   3  \n   4  \n   5  \n   6  \n   7  \n   8  \n
 0000020   9  \n   1   0  \n   1   1  \n   1   2  \n   1   3  \n   1   4
 0000040  \n   1   5  \n   1   6  \n   1   7  \n   1   8  \n   1   9  \n
-0000060   2   0  \n   2   1  \n   2   2  \n   2   3  \n   2   4  \n
-0000077                                                                       rc=0
+0000060   2   0  \n   2   1  \n   2   2  \n   2   3  \n   2   4  \n   2
+0000100   5  \n
+0000102                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..24`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..25`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`. `diff` contra `seq` compara el orden material completo, no
 un orden lexicográfico, por lo que una permutación de líneas no pasaría inadvertida.
 
