@@ -15,9 +15,9 @@ derivación.
 ### Identidad de los cortes recibidos
 
 ```text
-$ git cat-file -t da2730c25801e337675c0c1ea99c7d9f624c66e4
+$ git cat-file -t 62763b0b63c095a635c49c823cc23b61b5176596
 commit                                                                        rc=0
-$ git -C audit-chatgpt-k cat-file -t 991d8be36ccbcaa599382e4b46fc1de47027ce9b
+$ git -C audit-chatgpt-k cat-file -t 6af50d77927913f0332693b108f16a7465253e7d
 commit                                                                        rc=0
 ```
 
@@ -26,22 +26,22 @@ Ambas identidades existen realmente en su repositorio, en lugar de suponerse des
 ### Protocolo de derivación sobre el corte recibido
 
 ```text
-$ git rev-parse da2730c25801e337675c0c1ea99c7d9f624c66e4
-da2730c25801e337675c0c1ea99c7d9f624c66e4                                      rc=0
+$ git rev-parse 62763b0b63c095a635c49c823cc23b61b5176596
+62763b0b63c095a635c49c823cc23b61b5176596                                      rc=0
 
-$ git show --name-only --format= da2730c
+$ git show --name-only --format= 62763b0
 unidad-secuencia/EVENTO.md
 unidad-secuencia/SECUENCIA.txt                                                rc=0
 
-$ git -C audit-chatgpt-k show --name-only --format= 991d8be
-auditorias/da2730c25801e337675c0c1ea99c7d9f624c66e4.md                        rc=0
+$ git -C audit-chatgpt-k show --name-only --format= 6af50d7
+auditorias/62763b0b63c095a635c49c823cc23b61b5176596.md                        rc=0
 
-$ git -C audit-chatgpt-k cat-file -e 991d8be:auditorias/da2730c...md
+$ git -C audit-chatgpt-k cat-file -e 6af50d7:auditorias/62763b0...md
 (existe)                                                                      rc=0
 ```
 
 ```text
-D1  última entrega material: da2730c, tercera entrega de unidad-secuencia
+D1  última entrega material: 62763b0, cuarta entrega de unidad-secuencia
 D2  esa entrega toca sólo unidad-secuencia/, que es la unidad aplicable
 D3  la intervención auditora del corte es la auditoría de esa misma entrega
 D4  veredicto SUFICIENTE, sin defectos. Su próxima acción vigente ordena continuar el loop
@@ -61,15 +61,19 @@ Produjo la siguiente entrega principal de la unidad agregando exactamente un ele
 El sucesor se derivó del material presente en el corte, no del transporte:
 
 ```text
-$ git show da2730c25801e337675c0c1ea99c7d9f624c66e4:unidad-secuencia/SECUENCIA.txt | tail -n 1
-3                                                                             rc=0
+$ git show 62763b0b63c095a635c49c823cc23b61b5176596:unidad-secuencia/SECUENCIA.txt | tail -n 1
+4                                                                             rc=0
 ```
 
-Último valor material `3`, sucesor `4`. No se usó el `turn_id`, el número de commits, el
+Último valor material `4`, sucesor `5`. No se usó el `turn_id`, el número de commits, el
 `VALOR_SECUENCIA` ni el `ENTREGA_MATERIAL` declarados por la auditoría, ni memoria
 conversacional. Conforme a `D-5` del PLAN, el archivo en el corte es la única fuente del
-siguiente valor, incluso cuando la auditoría del corte enuncia ese mismo número: leerlo desde
-la auditoría convertiría un dato de proceso en fuente del material.
+siguiente valor, incluso cuando la auditoría del corte enuncia ese mismo número.
+
+La auditoría del corte deriva además que la próxima marca absoluta de la grilla del CONSTRUCTOR
+es `6`. Ese dato no se usó para producir el material y no altera esta entrega: quién decide y
+habilita un relevo es el AUDITOR, conforme a `C-7` y `C-8` del PLAN. El CONSTRUCTOR no cuenta
+posiciones para decidir su propio relevo.
 
 Las líneas anteriores no se modificaron, eliminaron ni reordenaron, conforme a `D-4` del PLAN.
 
@@ -90,20 +94,20 @@ true                                                                          rc
 
 ```text
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | wc -l
-4                                                                             rc=0
+5                                                                             rc=0
 ```
 
 ### V-2 monotonía exacta
 
 ```text
-$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 4) -
+$ git cat-file -p :unidad-secuencia/SECUENCIA.txt | diff -u <(seq 1 5) -
 (sin diferencias)                                                             rc=0
 $ git cat-file -p :unidad-secuencia/SECUENCIA.txt | od -c
-0000000   1  \n   2  \n   3  \n   4  \n
-0000010                                                                       rc=0
+0000000   1  \n   2  \n   3  \n   4  \n   5  \n
+0000012                                                                       rc=0
 ```
 
-El blob contiene exactamente la secuencia `1..4`, sin líneas en blanco y con un único salto de
+El blob contiene exactamente la secuencia `1..5`, sin líneas en blanco y con un único salto de
 línea final, conforme a `D-2` y `D-3`.
 
 ### V-3 delta de la entrega
